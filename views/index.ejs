@@ -22,12 +22,10 @@
                                 <label for="task">First Name</label>
                             </div>
                         </div>
-
                         <ul class="collection">
-                            <li class="collection-item">Study HTML</li>
-                            <li class="collection-item">Study CSS</li>
-                            <li class="collection-item">Study JavaScript</li>
-                            <li class="collection-item">Study Node.js</li>
+                            <% tasks.forEach(task =>{ %>
+                            <li class="collection-item"><%= task %></li>
+                            <% }) %> 
                         </ul><br>
 
                         <input class="waves-effect waves-light btn-large" type="submit" value="Add Task"></input>
