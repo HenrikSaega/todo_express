@@ -82,6 +82,20 @@ app.get('/delete-task/:taskId', (req, res) => {
     })
 })
 
+app.get('/delete-task/delete-all', (req, res) => {
+    readFile('./tasks.json')
+    .then(tasks => {
+        tasks.forEach((task, index) => {
+            if(task.id === deletedTaskId){
+            tasks.splice(index, 1) 
+            }
+        });
+        data = JSON.stringify(tasks, null, 2)
+        writeFile('tasks.json', data)
+        res.redirect('/')
+    })
+})
+
 
 app.listen(3001, () => {
     console.log('Server has started http://localhost:3001/')
