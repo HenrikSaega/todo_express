@@ -21,6 +21,18 @@ const readFile = (filename) => {
     });
 };
 
+const writeFile = (filename, data) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filename, data, 'utf-8', err => {
+            if (err) {
+                console.log(err)
+                return
+            }
+            resolve(true)
+        })
+    })
+}
+
 app.get('/', (req, res) => {
     readFile('./tasks.json')
     .then(tasks => {
@@ -28,38 +40,32 @@ app.get('/', (req, res) => {
     });
 });
 
-
 app.post('/', (req, res) => {
     console.log("Form sent data");
     let task = req.body.task;   
-
     readFile('./tasks.json')
     .then(tasks =>{
         let index
         if(tasks.length === 0)
         {
             index = 1
-        }  else {
+        }
+        else
+        {
             index = tasks[tasks.length-1].id +1; 
         }
-        const newTask ={ 
+        const newTask = { 
             "id" : index,
             "task" : req.body.task
         }  
         console.log(newTask)
         tasks.push(newTask);
         const data = JSON.stringify(tasks, null, 2)
-        fs.writeFile('./tasks.json', data, err => {
-            if(err){
-                console.error(err);
-            } else {
-                res.redirect("/");    
-            }
-
-        });
-
+        writeFile('tasks.json', data)
+        res.redirect('/')
     });
 });
+
 app.get('/delete-task/:taskId', (req, res) => {
     let deletedTaskId = parseInt(req.params.taskId)
     console.log(deletedTaskId)
@@ -71,14 +77,8 @@ app.get('/delete-task/:taskId', (req, res) => {
             }
         });
         data = JSON.stringify(tasks, null, 2)
-        fs.writeFile("./tasks.json", data, "utf8", err =>
-        {
-            if(err){
-                console.error(err)
-                return
-            }
-            res.redirect('/')
-        })
+        writeFile('tasks.json', data)
+        res.redirect('/')
     })
 })
 
