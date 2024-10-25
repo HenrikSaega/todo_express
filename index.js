@@ -36,34 +36,48 @@ const writeFile = (filename, data) => {
 app.get('/', (req, res) => {
     readFile('./tasks.json')
     .then(tasks => {
-    res.render('index',{tasks: tasks});
+    res.render('index',{
+        tasks: tasks,
+        error: null
+    });
     });
 });
 
 app.post('/', (req, res) => {
+    let error = null
+    if(req.body.task.trim().length === 0){
+        error = 'Please insert correct task data'
+        console.log('Please insert correct task data')
+    }else{
+        readFile('./tasks.json')
+        .then(tasks =>{
+            let index
+            if(tasks.length === 0)
+            {
+                index = 1
+            }
+            else
+            {
+                index = tasks[tasks.length-1].id +1; 
+            }
+            const newTask = { 
+                "id" : index,
+                "task" : req.body.task
+            }  
+            console.log(newTask)
+            tasks.push(newTask);
+            const data = JSON.stringify(tasks, null, 2)
+            writeFile('tasks.json', data)
+            res.redirect('/')
+        });
+    }
+});
+
+
+
+app.post('/', (req, res) => {
     console.log("Form sent data");
     let task = req.body.task;   
-    readFile('./tasks.json')
-    .then(tasks =>{
-        let index
-        if(tasks.length === 0)
-        {
-            index = 1
-        }
-        else
-        {
-            index = tasks[tasks.length-1].id +1; 
-        }
-        const newTask = { 
-            "id" : index,
-            "task" : req.body.task
-        }  
-        console.log(newTask)
-        tasks.push(newTask);
-        const data = JSON.stringify(tasks, null, 2)
-        writeFile('tasks.json', data)
-        res.redirect('/')
-    });
 });
 
 app.get('/delete-task/:taskId', (req, res) => {
@@ -82,18 +96,11 @@ app.get('/delete-task/:taskId', (req, res) => {
     })
 })
 
-app.get('/delete-task/delete-all', (req, res) => {
-    readFile('./tasks.json')
-    .then(tasks => {
-        tasks.forEach((task, index) => {
-            if(task.id === deletedTaskId){
-            tasks.splice(index, 1) 
-            }
-        });
-        data = JSON.stringify(tasks, null, 2)
-        writeFile('tasks.json', data)
-        res.redirect('/')
-    })
+app.get('/delete-tasks', (req, res) => {
+    tasks = []
+    const data = JSON.stringify(tasks, null, 2)
+    writeFile('./tasks.json', data)
+    res.redirect('./')
 })
 
 
