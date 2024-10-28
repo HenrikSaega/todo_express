@@ -45,34 +45,40 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     let error = null
-    if(req.body.task.trim().length === 0){
+    if(req.body.task.trim().length == 0){
         error = 'Please insert correct task data'
         console.log('Please insert correct task data')
-    }else{
         readFile('./tasks.json')
         .then(tasks =>{
-            let index
-            if(tasks.length === 0)
-            {
-                index = 1
-            }
-            else
-            {
-                index = tasks[tasks.length-1].id +1; 
-            }
-            const newTask = { 
-                "id" : index,
-                "task" : req.body.task
-            }  
-            console.log(newTask)
-            tasks.push(newTask);
-            const data = JSON.stringify(tasks, null, 2)
-            writeFile('tasks.json', data)
-            res.redirect('/')
-        });
+            res.render('index', {
+                tasks: tasks,
+                error: error
+            })
+        })
     }
-});
-
+    else{
+    readFile('./tasks.json')
+    .then(tasks =>{
+        let index
+        if(tasks.length == 0)
+        {
+            index = 1
+        }
+        else
+        {
+            index = tasks[tasks.length-1].id +1; 
+        }
+        const newTask = { 
+            "id" : index,
+            "task" : req.body.task
+        }
+        tasks.push(newTask);
+        data = JSON.stringify(tasks, null, 2)
+        writeFile('tasks.json', data)
+        res.redirect('/')
+    })
+    }
+})
 
 
 app.post('/', (req, res) => {
@@ -101,6 +107,13 @@ app.get('/delete-tasks', (req, res) => {
     const data = JSON.stringify(tasks, null, 2)
     writeFile('./tasks.json', data)
     res.redirect('./')
+})
+
+app.get('/update-task/:taskId', (req, res) => {
+    readFile('./tasks.json')
+    console.log('Update')
+    res.redirect('')
+
 })
 
 
