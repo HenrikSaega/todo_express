@@ -14,21 +14,33 @@
         <div class="col 12 m6">
             <div class="card">
                 <div class="card-content">
-                    
-                <span class="Todo List">ToDO List</span>
+
+                    <% if(error !== null){ %>
+                        <div class="row teal lighten-4">
+                            <div class="col-12">
+                                <p class="center-align"><%= error %></p>
+                            </div>
+                        </div>  
+                    <%}%>
+
+                <span class="Todo List">ToDo List</span>
                     <div class="row">
-                        <form class="col s12" method="post" action="/">
+                        <form class="col s12" method="post" action="/update-task">
                         <div class="row">
                             <div class="input-field col s6">
-                                <input placeholder="" id="task" class= "validate" type="text" name="task">
+                                <input
+                                value=""
+                                 id="task" 
+                                 class= "validate" 
+                                 type="text" 
+                                 name="task"
+                                 >
                                 <label for="task">Update task:</label>
                             </div>
                         </div>
-                        <ul class="collection">
-                        </ul><br>
-                        <input class="waves-effect waves-light btn-large" type="submit" value="Update task"></input>
-                        <a class="waves-effect waves-light btn-large"
-                           href="delete-tasks">Cancel
+                        <input class="btn-large" type="submit" value="Update task"></input>
+                        <a class="btn-large"
+                           href="/">Cancel
                         </a>
                         </form>
                     </div>

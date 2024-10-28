@@ -10,14 +10,19 @@ app.use(express.urlencoded({ extended: true }));
 const readFile = (filename) => {
     return new Promise((resolve, reject) =>{
         fs.readFile(filename, "utf8", (err, data)=>{
-                if(err)
-                {
-                    console.error(err);
-                    return;
-                } 
-                const tasks = JSON.parse(data)
-                resolve(tasks);
-            });
+            if(err)
+            {
+                console.error(err);
+                return;
+            } 
+            const tasks = JSON.parse(data)
+            resolve(tasks);
+            // kui tasks.json on tühi, siis lisab sinna kaldsulud, et vältida errorit!
+            if(data.trim()=== "")
+            {
+                fs.writeFile(filename, "[]", utf8)
+            } 
+        });
     });
 };
 
@@ -32,6 +37,7 @@ const writeFile = (filename, data) => {
         })
     })
 }
+
 
 app.get('/', (req, res) => {
     readFile('./tasks.json')
@@ -76,6 +82,7 @@ app.post('/', (req, res) => {
         data = JSON.stringify(tasks, null, 2)
         writeFile('tasks.json', data)
         res.redirect('/')
+        
     })
     }
 })
@@ -110,10 +117,22 @@ app.get('/delete-tasks', (req, res) => {
 })
 
 app.get('/update-task/:taskId', (req, res) => {
+    let updateTaskId = parseInt(req.params.taskId)
     readFile('./tasks.json')
-    console.log('Update')
-    res.redirect('')
-
+    .then(tasks => {
+        let updateTask;
+        tasks.forEach((task) =>{
+            if(task.id === updateTaskId){
+                updateTask = task.task;
+            }
+        })
+        res.render('update',{
+            updateTask: updateTask,
+            updateTaksId: updateTaskId,
+            error: null
+        })
+        console.log("Current task in process of update => " + tasks)
+    })
 })
 
 
