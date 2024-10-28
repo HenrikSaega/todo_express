@@ -82,7 +82,6 @@ app.post('/', (req, res) => {
         data = JSON.stringify(tasks, null, 2)
         writeFile('tasks.json', data)
         res.redirect('/')
-        
     })
     }
 })
@@ -106,6 +105,11 @@ app.get('/delete-task/:taskId', (req, res) => {
         data = JSON.stringify(tasks, null, 2)
         writeFile('tasks.json', data)
         res.redirect('/')
+        // kui tasks.json on tühi, siis lisab sinna kaldsulud, et vältida errorit!
+        if(data.trim()=== "")
+        {
+            fs.writeFile(filename, "[]", utf8)
+        } 
     })
 })
 
@@ -114,6 +118,11 @@ app.get('/delete-tasks', (req, res) => {
     const data = JSON.stringify(tasks, null, 2)
     writeFile('./tasks.json', data)
     res.redirect('./')
+    // kui tasks.json on tühi, siis lisab sinna kaldsulud, et vältida errorit!
+    if(data.trim()=== "")
+    {
+        fs.writeFile(filename, "[]", utf8)
+    }
 })
 
 app.get('/update-task/:taskId', (req, res) => {
@@ -131,10 +140,23 @@ app.get('/update-task/:taskId', (req, res) => {
             updateTaksId: updateTaskId,
             error: null
         })
-        console.log("Current task in process of update => " + tasks)
+        console.log("Current task in process of update => " + JSON.stringify(tasks[updateTaskId-1]))
     })
 })
-
+app.get('/update-task', (req, res) => {
+    console.log(req.body)
+    let updateTaskId = parseInt(req.body.taskId)
+    let updateTask = req.body.task
+    let error = null
+    if(updateTask.trim().length === 0){
+        error = 'Please insert correct task data'
+        res.render('update',{
+            updateTask: updateTask,
+            updateTaskId: updateTaskId,
+            error: error
+        })
+    }
+})
 
 app.listen(3001, () => {
     console.log('Server has started http://localhost:3001/')

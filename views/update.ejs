@@ -25,17 +25,23 @@
 
                 <span class="Todo List">ToDo List</span>
                     <div class="row">
-                        <form class="col s12" method="post" action="/update-task">
+                        <form class="col s12" method="post" action="/update-task<%= updateTask %><%= updateTask %>">
                         <div class="row">
                             <div class="input-field col s6">
                                 <input
-                                value=""
-                                 id="task" 
-                                 class= "validate" 
-                                 type="text" 
-                                 name="task"
+                                    value="<%= updateTask %>"
+                                    id="task" 
+                                    class= "validate" 
+                                    type="text" 
+                                    name="task"
                                  >
                                 <label for="task">Update task:</label>
+                                <input
+                                    value="<%= updateTask %>"
+                                    id="taskId" 
+                                    type="hidden" 
+                                    name="taskId"
+                                 >
                             </div>
                         </div>
                         <input class="btn-large" type="submit" value="Update task"></input>
