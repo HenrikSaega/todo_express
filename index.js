@@ -138,18 +138,19 @@ app.get('/update-task/:taskId', (req, res) => {
         })
         res.render('update',{
             updateTask: updateTask,
-            updateTaksId: updateTaskId,
+            updateTaskId: updateTaskId,
             error: null
         })
         console.log("Current task in process of update => " + JSON.stringify(tasks[updateTaskId-1]))
     })
 })
-app.get('/update-task', (req, res) => {
+app.post('/update-task', (req, res) => {
     console.log(req.body)
     let updateTaskId = parseInt(req.body.taskId)
     let updateTask = req.body.task
     let error = null
-    if(updateTask.trim().length === 0){
+    
+    if(updateTask.trim().length == 0){
         error = 'Please insert correct task data'
         res.render('update',{
             updateTask: updateTask,
@@ -157,19 +158,19 @@ app.get('/update-task', (req, res) => {
             error: error
         })
     }
-    else{
-        readFile('/tasks.json')
-        .then(tasks => {
-            tasks.forEach((task, index) => {  
-                if(task.id === updateTaskId){
-                    tasks[index].task = updateTask
-                }
-            })
+    else
+    {
+    readFile('./tasks.json')
+    .then(tasks => {
+        tasks.forEach((task, index) => { 
+            if(task.id === updateTaskId){
+                tasks[index].task = updateTask
+            }
         })
-        console.log(tasks)
         const data = JSON.stringify(tasks, null, 2)
-        writeFile('tasks.json', updateTask)
+        writeFile('./tasks.json', data)
         res.redirect('/')
+    })
     }
 })
 
