@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const fs = require('node:fs');
-
 const path = require('path')
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
@@ -42,18 +41,18 @@ const writeFile = (filename, data) => {
 app.get('/', (req, res) => {
     readFile('./tasks.json')
     .then(tasks => {
-    res.render('index',{
+        res.render('index',{
         tasks: tasks,
         error: null
-    });
+        });
     });
 });
 
 app.post('/', (req, res) => {
+    let task = req.body.task
     let error = null
     if(req.body.task.trim().length == 0){
         error = 'Please insert correct task data'
-        console.log('Please insert correct task data')
         readFile('./tasks.json')
         .then(tasks =>{
             res.render('index', {
@@ -102,9 +101,10 @@ app.get('/delete-task/:taskId', (req, res) => {
                 tasks.splice(index, 1) 
             }
         });
-        data = JSON.stringify(tasks, null, 2)
+        const data = JSON.stringify(tasks, null, 2)
         writeFile('tasks.json', data)
         res.redirect('/')
+
         // kui tasks.json on tühi, siis lisab sinna kaldsulud, et vältida errorit!
         if(data.trim()=== "")
         {
@@ -117,7 +117,8 @@ app.get('/delete-tasks', (req, res) => {
     tasks = []
     const data = JSON.stringify(tasks, null, 2)
     writeFile('./tasks.json', data)
-    res.redirect('./')
+    res.redirect('/')
+
     // kui tasks.json on tühi, siis lisab sinna kaldsulud, et vältida errorit!
     if(data.trim()=== "")
     {
@@ -155,6 +156,20 @@ app.get('/update-task', (req, res) => {
             updateTaskId: updateTaskId,
             error: error
         })
+    }
+    else{
+        readFile('/tasks.json')
+        .then(tasks => {
+            tasks.forEach((task, index) => {  
+                if(task.id === updateTaskId){
+                    tasks[index].task = updateTask
+                }
+            })
+        })
+        console.log(tasks)
+        const data = JSON.stringify(tasks, null, 2)
+        writeFile('tasks.json', updateTask)
+        res.redirect('/')
     }
 })
 
